@@ -1,0 +1,31 @@
+{
+  "name": "vonage-demos",
+  "private": true,
+  "description": "Demos of the Vonage Voice API in TypeScript, sharing one setup.",
+  "type": "module",
+  "workspaces": [
+    "shared"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "reminders": "node --env-file=.env demos/appointment-reminders/call.ts",
+    "phone": "node --env-file=.env demos/phone/index.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "biome check .",
+    "format": "biome check --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.0",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@vonage/client-sdk": "2.7.5",
+    "@vonage/jwt": "1.17.1",
+    "@vonage/voice": "1.24.1",
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,625 @@
+/* The demo pages' style, after vonage.com: black on white, flat, one electric purple accent. */
+
+/* Spezia is one family: 500 sets Wide Medium, as on vonage.com. Without the files, Arial stands in. */
+@font-face {
+  font-family: Spezia;
+  src: url(fonts/SpeziaWeb-Regular.woff2) format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Spezia;
+  src: url(fonts/SpeziaWeb-WideMedium.woff2) format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: Spezia, Arial, Helvetica, sans-serif;
+  --electric-purple: #881fff;
+  --on-electric-purple: #ffffff;
+  --surface: #ffffff;
+  --ink: #000000;
+  --ink-muted: #5f6169;
+  --ink-field: #2c2d30;
+  --field-border: #90929b;
+  --field-surface: #ffffff;
+  --error: #ee0205;
+  --disabled: #c1c3cd;
+  --focus-ring: #000000;
+  --space-10: 10px;
+  --space-20: 20px;
+  --space-25: 25px;
+  --space-50: 50px;
+  --radius-field: 8px;
+  --radius-button: 10px;
+  --button-height: 70px;
+  --field-height: 50px;
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 22px;
+  letter-spacing: -0.2px;
+}
+
+/* One narrow column, left-aligned, with the controls stacked. */
+main,
+header,
+form,
+section,
+.vg-columns {
+  display: grid;
+  gap: var(--space-20);
+}
+/* The display set above would show a form or section the page has hidden. */
+[hidden] {
+  display: none;
+}
+/* The gaps space the text, so paragraphs need no margin of their own. */
+p {
+  margin: 0;
+}
+main {
+  box-sizing: border-box;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: var(--space-50) var(--space-20);
+}
+
+/* Vonage's logo, vonage-logo.svg, above the title in the page's <header>. */
+.vg-logo {
+  justify-self: start;
+  height: 30px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 42px;
+  letter-spacing: -1px;
+}
+
+/* A section's title, such as each step of the calculator. */
+h2 {
+  margin: var(--space-20) 0 0;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.5px;
+}
+
+/* Buttons keep their look on hover, as on vonage.com. */
+.vg-btn {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--button-height);
+  padding: 0 var(--space-25);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-button);
+  background: var(--ink);
+  color: var(--surface);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.vg-btn--secondary {
+  background: transparent;
+  color: var(--ink);
+}
+/* At most one electric button on a page: the action the page is for. */
+.vg-btn--electric {
+  border-color: var(--electric-purple);
+  background: var(--electric-purple);
+  color: var(--on-electric-purple);
+}
+.vg-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+/* A call ringing in: the Answer button sends out rings. Without motion, one ring stays. */
+.vg-btn--ringing {
+  animation: vg-ringing 1.5s ease-out infinite;
+}
+@keyframes vg-ringing {
+  from {
+    box-shadow: 0 0 0 0 var(--electric-purple);
+  }
+  to {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vg-btn--ringing {
+    animation: none;
+    outline: 2px solid var(--electric-purple);
+    outline-offset: 3px;
+  }
+}
+
+/* Two buttons side by side, such as Call and Hang up. */
+.vg-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-10);
+}
+
+/* A field with its label inside: give the input placeholder=" " and put the label after it. The
+   label sits in the middle while the field is empty and moves up once it has focus or a value, so
+   it stays readable as you type. Hints go in the label, never in the placeholder. */
+.vg-field {
+  position: relative;
+}
+.vg-field__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--field-height);
+  margin: 0;
+  padding: 17.5px 2px 1px 20px;
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-field);
+  background: var(--field-surface);
+  color: var(--ink-field);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.25px;
+  appearance: none;
+}
+.vg-field__input:disabled {
+  border-color: var(--disabled);
+  background: var(--disabled);
+}
+.vg-field__label {
+  position: absolute;
+  top: 3.3px;
+  left: 20px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.25px;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+.vg-field__input:placeholder-shown:not(:focus) + .vg-field__label {
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 17px;
+}
+/* A select draws its chevron with borders: the site's icon font is not part of this style. */
+.vg-field--select::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--ink-field);
+  border-bottom: 2px solid var(--ink-field);
+  transform: translateY(-75%) rotate(45deg);
+  pointer-events: none;
+}
+.vg-field--select .vg-field__input {
+  padding-right: 44px;
+  cursor: pointer;
+}
+/* A phone dialpad: three keys a row, each with its letters in a <small> under the digit. */
+.vg-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-10);
+}
+.vg-keypad button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  padding: 0;
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-button);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 26px;
+  cursor: pointer;
+  /* A long press on a touch screen would otherwise select the text or open a menu. */
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* Empty under 1, so it sits level with the other digits. */
+.vg-keypad small {
+  min-height: 12px;
+  padding-left: 2px;
+  font-size: 11px;
+  line-height: 12px;
+  letter-spacing: 2px;
+}
+/* The + under 0 would be a speck at the letters' size. */
+.vg-keypad button:nth-child(11) small {
+  font-size: 18px;
+}
+/* * and # have no letters, so they sit in the middle of the key. */
+.vg-keypad button:is(:nth-child(10), :nth-child(12)) small {
+  display: none;
+}
+/* The font draws * at the top of the line, as a superscript: this moves it 4px down to the middle. */
+.vg-keypad button:nth-child(10) {
+  padding-top: 8px;
+}
+/* The number field with a delete key beside it, drawn as on a mobile phone. */
+.vg-dial {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-10);
+}
+.vg-dial__delete {
+  width: var(--field-height);
+  height: var(--field-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-field);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.vg-dial__delete svg {
+  display: block;
+  width: 28px;
+  height: 20px;
+  margin: auto;
+  fill: currentColor;
+}
+/* The cross, in the page's colour so it reads as cut out of the key. */
+.vg-dial__delete path + path {
+  fill: none;
+  stroke: var(--surface);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Records in rows, such as the reminders' appointments: rules between the rows, no fills. */
+.vg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+}
+.vg-table th,
+.vg-table td {
+  padding: var(--space-10) var(--space-10) var(--space-10) 0;
+  border-bottom: 1px solid var(--disabled);
+}
+.vg-table :is(th, td):last-child {
+  padding-right: 0;
+}
+/* The header reads as a field label does. */
+.vg-table th {
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.25px;
+}
+
+/* Figures in rows, such as the deck's breakdown: every column after the first lines up on the
+   right. */
+.vg-table--figures :is(th, td):not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* A figure the reader can change, such as the calculator's assumptions: an input in a row's last
+   cell. The negative margin keeps the row as high as the others. */
+.vg-table input {
+  box-sizing: border-box;
+  width: 80px;
+  margin: -5px 0;
+  padding: 4px 8px;
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-field);
+  background: var(--field-surface);
+  color: var(--ink-field);
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: right;
+  /* No spin buttons: they would push the number off the right edge. */
+  appearance: textfield;
+}
+
+/* What the page is doing, in words: this style has no success or warning colours. */
+.vg-status {
+  min-height: 22px;
+}
+.vg-status::first-letter {
+  text-transform: uppercase;
+}
+
+/* The one number a page is for, in the accent colour, with what it means under it. */
+.vg-figure strong {
+  display: block;
+  color: var(--electric-purple);
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 48px;
+  letter-spacing: -1px;
+}
+
+/* Small print, such as where a figure comes from. It reads as a field label does. */
+.vg-note {
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.25px;
+}
+
+/* What a page keeps out of the way until someone asks, such as the calculator's sources. */
+summary {
+  cursor: pointer;
+}
+details[open] > summary {
+  margin-bottom: var(--space-20);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --button-height: 60px;
+  }
+  h1 {
+    font-size: 36px;
+    line-height: 40px;
+    letter-spacing: -1.25px;
+  }
+}
+
+/* A page with more to show than one column holds, such as the calculator: give its <main>
+   vg-wide, and vg-columns to each group whose parts can sit side by side. On a narrower screen
+   the page stays the one column above. */
+@media (min-width: 1120px) {
+  /* With three columns across, the groups need more room between them to read as groups. */
+  .vg-wide {
+    max-width: 1200px;
+    gap: var(--space-50);
+  }
+  .vg-columns {
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--space-50);
+    align-items: start;
+  }
+  /* A group's own title runs the full width. */
+  .vg-columns > h2 {
+    grid-column: 1 / -1;
+  }
+}
+
+/* A slide deck: give its <main> vg-deck and make each slide a <section class="vg-slide">. A slide
+   is 16:9 and as large as the window allows. Everything on it is sized in em, so it scales with
+   the slide: 1em is the body text, 20px on a 1280px slide. */
+.vg-deck {
+  max-width: none;
+  min-height: 100vh;
+  padding: 0;
+  place-content: center;
+}
+.vg-slide {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  width: min(100vw, 177.78vh);
+  height: min(56.25vw, 100vh);
+  padding: 2.4em 4em;
+  font-size: calc(min(100vw, 177.78vh) / 64);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+/* The display set above would show a slide the deck has hidden. */
+.vg-slide[hidden] {
+  display: none;
+}
+/* The logo on the left, and where you are in the deck on the right. */
+.vg-slide header {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+.vg-slide .vg-logo {
+  height: 1.5em;
+}
+.vg-slide h2 {
+  margin: 0.2em 0;
+  font-size: 2.5em;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.vg-slide h3 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 500;
+  line-height: 1.15;
+}
+.vg-slide .vg-note {
+  font-size: 0.7em;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+/* What closes a slide sits at its bottom edge, such as the small print. */
+.vg-slide footer {
+  display: grid;
+  gap: 0.8em;
+  margin-top: auto;
+}
+.vg-slide a {
+  color: var(--electric-purple);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* A slide's parts side by side under one rule each: one equal column per child. */
+.vg-slide__row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2.5em;
+}
+.vg-slide__row > * {
+  display: grid;
+  align-content: start;
+  gap: 0.5em;
+  padding-top: 0.7em;
+  border-top: 2px solid var(--ink);
+}
+.vg-slide__row ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.vg-slide__row li {
+  padding: 0.45em 0;
+  border-bottom: 1px solid var(--disabled);
+}
+/* What follows the title is centred in the room the slide has left, so a slide with little on it
+   does not hang from its top edge. */
+.vg-slide h2 + * {
+  margin-top: auto;
+}
+.vg-slide > :not(footer):last-child {
+  margin-bottom: auto;
+}
+.vg-slide .vg-figure strong {
+  font-size: 3.2em;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+/* In a row of figures they stay black: the accent is for the slide's one conclusion. */
+.vg-slide__row .vg-figure strong {
+  color: var(--ink);
+}
+/* A figure the audience gives, typed where it shows: an input in a <label class="vg-figure">,
+   followed by what it counts. */
+.vg-slide .vg-figure input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0 0.1em;
+  border: 0;
+  border-bottom: 1px solid var(--field-border);
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 3.2em;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* A flow, such as the steps of a reminder: an <ol class="vg-flow">. Its steps are boxes side by
+   side, with an arrow from each to the next. */
+.vg-flow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 3em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.vg-flow li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.5em;
+  padding: 1em 1.2em 1.2em;
+  border: 2px solid var(--ink);
+  border-radius: 0.5em;
+}
+/* The arrow sits in the gap before a step: a line, and a head drawn with borders. */
+.vg-flow li + li::before,
+.vg-flow li + li::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  border-top: 2px solid var(--ink);
+}
+.vg-flow li + li::before {
+  left: -2.4em;
+  width: 1.8em;
+  transform: translateY(-50%);
+}
+.vg-flow li + li::after {
+  left: -1.2em;
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid var(--ink);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* A picture beside what a slide says, such as a phone showing the message: an
+   <img class="vg-slide__picture"> placed before the title. It stands on the slide's bottom edge,
+   and what follows the title keeps clear of it. The title runs its full width, so keep it short
+   enough to end before the picture. */
+.vg-slide__picture {
+  position: absolute;
+  right: 4em;
+  bottom: 0;
+  width: 18em;
+}
+.vg-slide__picture ~ :not(h2) {
+  margin-right: 20.5em;
+}
+
+/* A table on a slide scales with it, and so does a figure the audience can change in it. */
+.vg-slide .vg-table {
+  font-size: 0.75em;
+  line-height: 1.25;
+}
+.vg-slide .vg-table :is(th, td) {
+  padding-block: 0.45em;
+}
+.vg-slide .vg-table th {
+  font-size: 0.9em;
+  line-height: inherit;
+}
+.vg-slide .vg-table input {
+  width: 4.5em;
+  margin: -0.3em 0;
+  padding: 0.15em 0.4em;
+}
+
+/* Printed or saved as a PDF, the deck is one landscape page per slide. */
+@media print {
+  @page {
+    size: 1280px 720px;
+    margin: 0;
+  }
+  .vg-deck {
+    display: block;
+    min-height: 0;
+  }
+  .vg-slide,
+  .vg-slide[hidden] {
+    display: flex;
+    width: 1280px;
+    height: 720px;
+    font-size: 20px;
+    break-after: page;
+  }
+}

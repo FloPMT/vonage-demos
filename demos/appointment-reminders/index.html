@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Appointment reminders</title>
+    <link rel="icon" href="/style/favicon.ico" />
+    <link rel="stylesheet" href="/style/vonage.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img class="vg-logo" src="/style/vonage-logo.svg" alt="Vonage" />
+        <h1>Appointment reminders</h1>
+      </header>
+      <form id="patient">
+        <div class="vg-field">
+          <input id="name" class="vg-field__input" name="name" placeholder=" " autocomplete="off" />
+          <label class="vg-field__label" for="name">Patient's name (optional)</label>
+        </div>
+        <div class="vg-field vg-field--select">
+          <select id="language" class="vg-field__input" name="language">
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="en">English</option>
+            <option value="">Ask the patient</option>
+          </select>
+          <label class="vg-field__label" for="language">Language</label>
+        </div>
+        <button class="vg-btn vg-btn--electric" type="submit">Call</button>
+      </form>
+      <p id="status" class="vg-status" role="status"></p>
+      <table id="appointments" class="vg-table" hidden>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Language</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+
+    <script type="module">
+      const form = document.getElementById("patient");
+      const button = form.querySelector("button");
+      const status = document.getElementById("status");
+      const table = document.getElementById("appointments");
+      const languageName = new Intl.DisplayNames(["en"], { type: "language" });
+      const statusName = {
+        pending: "Pending",
+        confirmed: "Confirmed",
+        cancelled: "Cancelled",
+        unanswered: "No answer",
+        messaged: "No answer, WhatsApp sent",
+      };
+
+      // The server holds the appointments, as your booking system would, and sends the table after
+      // every change. If the server restarts, the browser reconnects by itself.
+      new EventSource("/appointments").onmessage = (event) => {
+        const appointments = JSON.parse(event.data);
+        const rows = table.tBodies[0];
+        rows.replaceChildren();
+        for (const { id, name, language, status } of appointments) {
+          const row = rows.insertRow();
+          // Without a language on record, it is unknown until the patient picks one in the menu.
+          const cells = [id, name, language ? languageName.of(language) : "Unknown", statusName[status]];
+          for (const text of cells) row.insertCell().textContent = text;
+        }
+        table.hidden = !appointments.length;
+      };
+
+      form.onsubmit = async (event) => {
+        event.preventDefault();
+        button.disabled = true;
+        status.textContent = "Calling";
+        try {
+          const response = await fetch("/call", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(Object.fromEntries(new FormData(form))),
+          });
+          const { error } = await response.json();
+          status.textContent = error ? `Could not place the call: ${error}` : "Call placed";
+        } catch (error) {
+          status.textContent = `Could not reach the server: ${error.message}`;
+        } finally {
+          button.disabled = false;
+        }
+      };
+    </script>
+  </body>
+</html>

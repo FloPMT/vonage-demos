@@ -1,0 +1,21 @@
+node_modules/
+
+# Secrets. The private key and .env never leave this machine.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+.vonagerc
+
+# Kept local: the slides and their notes, and the coding assistant's instructions and settings.
+presentation/
+CLAUDE.md
+.claude/
+
+# Spezia is licensed to Vonage, so its files stay out of the repository. Without them, the pages
+# use Arial.
+shared/style/fonts/
+
+*.tsbuildinfo
+.DS_Store

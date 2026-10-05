@@ -1,0 +1,17 @@
+{
+  "name": "@vonage-demos/shared",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Settings, the Vonage clients and the signed webhook server that the demos share.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@vonage/auth": "1.18.1",
+    "@vonage/jwt": "1.17.1",
+    "@vonage/users": "1.17.1",
+    "@vonage/voice": "1.24.1",
+    "express": "^5.2.1"
+  }
+}
